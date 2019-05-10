@@ -1,0 +1,193 @@
+<html>
+
+    <head>
+        <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+        <meta content="utf-8" http-equiv="encoding">
+        <script src='asserts/js/cannon.js'></script>
+        <script src="asserts/js/Three.js"></script>
+        <script src="asserts/keyboard/keyboard.js"></script>
+        <script src="asserts/js/jquery.js"></script>
+        <script src="asserts/mazeGenerators/maze.js" type="application/javascript"></script>
+        <script src="asserts/pathFinders/Astar.js" type="application/javascript"></script>
+        <script src="asserts/drawMap/drawMap.js" type="application/javascript"></script>
+        <script src="asserts/js/ClassesMethods.js" type="application/javascript"></script>
+        <script src="asserts/gameStates/Chased.js" type="application/javascript"></script>
+        <script src="asserts/gameStates/Timed.js" type="application/javascript"></script>
+        <script src="asserts/gameStates/Obstacles.js" type="application/javascript"></script>
+        <script src="asserts/js/game.js" type="application/javascript"></script>
+
+        <script>
+
+        // add restart button without refresing
+        // add rankings, save data in stats
+        //
+
+        jQuery.fn.centerv = function () {
+            wh = window.innerHeight;
+            h = this.outerHeight();
+            this.css("position", "absolute");
+            this.css("top", Math.max(0, (wh - h)/2) + "px");
+            return this;
+        }
+
+        jQuery.fn.centerh = function () {
+            ww = window.innerWidth;
+            w = this.outerWidth();
+            this.css("position", "absolute");
+            this.css("left", Math.max(0, (ww - w)/2) + "px");
+            return this;
+        }
+
+        jQuery.fn.center = function () {
+            this.centerv();
+            this.centerh();
+            return this;
+        }
+
+        $(document).ready(function() {
+
+            // Prepare the instructions.
+            $('#instructions').center();
+            $('#instructions').hide();
+            keyboardJS.bind('i', function(e){$('#instructions').show()},
+                                     function(e){$('#instructions').hide()});
+
+            // Create the renderer.
+            renderer = new THREE.WebGLRenderer();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+
+            // Bind keyboard and resize events.
+            keyboardJS.bind(['left', 'right', 'down', 'up'], onMoveKey);
+            keyboardJS.bind(['a', 'd', 's', 'w'], onMoveKey);
+            keyboardJS.bind('f', onMoveKey);
+            keyboardJS.bind(['left', 'right', 'down', 'up'], null, onReleaseKey);
+            keyboardJS.bind(['a', 'd', 's', 'w'], null, onReleaseKey);
+            keyboardJS.bind('f', null, onReleaseKey);
+            $(window).resize(onResize);
+
+            // Set the initial game state.
+            gameState = 'initialize';
+
+            // Start the game loop.
+            requestAnimationFrame(gameLoop);
+
+            })
+            function myFunction(){
+            //gameState = 'fade out';
+            start = [1,1]
+            end = [mazeDimensions-1,mazeDimensions-2];
+            gameState = 'initialize';
+
+            }
+
+
+        </script>
+        <!-- <link rel="stylesheet" href="/css/master.css"> -->
+        <style>
+
+    body {
+        background: black;
+        margin: 0;
+        padding: 0;
+        font-family: 'Helvetica';
+    }
+
+    #instructions {
+        background-color: rgba(0,0,0,0.75);
+        color: white;
+        text-align: center;
+        padding: 32px;
+        margin: 0px;
+        display: inline;
+        border: 2px solid white;
+    }
+
+    #help {
+        position: absolute;
+        left: 0px;
+        bottom: 0px;
+        padding: 4px;
+        color: white;
+    }
+
+    #level {
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        padding: 4px;
+        color: yellow;
+        font-weight: bold;
+    }
+
+    #time {
+        position: absolute;
+        left: 250px;
+        top: 0px;
+        padding: 4px;
+        color: yellow;
+        font-weight: bold;
+    }
+
+    #timeup {
+        position: absolute;
+        top: 450px;
+        left: 450px;
+        padding: 0px;
+        color: Red;
+        font-size: 28px;
+        font-weight: bold;
+    }
+    #instruct{
+        position: absolute;
+        top: 0px;
+        left: 500px;
+        padding: 0px;
+        color: Red;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+
+
+</style>
+    </head>
+
+    <body>
+
+      <div id='button'>
+        <button style="position: absolute; top:0px; right:0px;" onclick="myFunction()">Restart</button>
+      </div>
+
+
+    <div id='instructions'>
+        How to play Forgotten Paths:
+        <br><br>
+        Use the arrow keys to move the ball and find the exit to the maze.
+        <br><br>
+        Vim trainees: w, s, a, d
+    </div>
+
+    <div id='help'>
+        Hold down the 'I' key for instructions.
+    </div>
+
+    <div id='level'>
+        Level 1
+    </div>
+    <div id='time'>
+        time
+    </div>
+    <div id='timeup'>
+
+    </div>
+    <div id='instruct'>
+        Exit maze within 60 seconds
+    </div>
+
+    <canvas id="canvas"
+          style="position: absolute; left: 2; top: 2; z-index: 1; width: 250" height="250"></canvas>
+       </body>
+    </html>
+    </body>
